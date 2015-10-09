@@ -81,7 +81,7 @@ func field(distance: CGVector) -> CGVector {
 }
 
 func singletonField(v: CGFloat) -> CGFloat {
-    return -(v - 50)/1000
+    return -(v-40)/10000
 }
 
 
@@ -93,9 +93,7 @@ class GameScene: SKScene {
         
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
-        
+    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             
@@ -116,33 +114,20 @@ class GameScene: SKScene {
     }
    
     override func update(currentTime: CFTimeInterval) {
-        var newThings :[thing] = []
         for var idx = 0; idx < things.count; idx++ {
-            for var idx2 = 0; idx < things.count; idx++ {
-                if idx == idx2 {
-                    newThings.append(things[idx])
-                    continue
-                }
-                let thing1 = things[idx]
+            let thing1 = things[idx]
+            for var idx2 = idx+1; idx2 < things.count; idx2++ {
                 let thing2 = things[idx2]
-                
-                let force = field(distance(things[idx], things[idx2]))
+                let force = field(distance(thing1, things[idx2]))
                 thing1.velocity += force
-                newThings.append(thing1)
                 thing2.velocity -= force
-                if idx2 < newThings.count {
-                    newThings[idx2] = thing2
-                }
             }
         }
         
-        for thing in things {
+        for var idx = 0; (idx < things.count); idx++ {
+            let thing = things[idx]
             thing.position = thing.position + thing.velocity
-            scale(thing.velocity,0.8)
-        }
-        
-        for var idx = 0; idx < things.count; idx++ {
-            sprites[idx].position = things[idx].position
+            sprites[idx].position = thing.position
         }
     }
 }
